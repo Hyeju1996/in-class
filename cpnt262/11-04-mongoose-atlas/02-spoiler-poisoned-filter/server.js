@@ -12,15 +12,19 @@ const randomItem = require('./random-item')
 /*****************/
 
 // List entry route
-// TODO: refactor for arrow functions so we look fashionable
 app.get('/api/guild', (req, res) => {
-  let randomCharacter = null;
+  let randomCharacter = null; // for Random member filter
+  let poisonedCharacter = null; // for Poisoned member filter
 
-  // TODO: Add support for `?filter=poisoned` and return all guild members that have `poisoned` set to true
   if (req.query.filter === 'random') {   
 
     randomCharacter = randomItem(guild)
     res.send(randomCharacter)
+
+  } else if (req.query.filter === 'poisoned') {
+
+    poisonedCharacter = guild.filter(item => item.poisoned)
+    res.send(poisonedCharacter)
 
   } else if (typeof guild !== 'undefined' && Array.isArray(guild)) {
 
