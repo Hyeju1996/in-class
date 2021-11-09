@@ -25,14 +25,17 @@ mongoose.connect(
   .catch(function(err){
     console.log(err)
   });
-
-/*****************/
-/* Define Schema */
-/*****************/
-
+  
+  /*****************/
+  /* Define Schema */
+  /*****************/
+  
 const playerSchema = new mongoose.Schema({
   id: Number,
-  name: String,
+  name: {
+    type: String,
+    unique: true
+  },
   class: String,
   race: String,
   strength: Number,
@@ -41,7 +44,10 @@ const playerSchema = new mongoose.Schema({
   intelligence: Number,
   wisdom: Number,
   charisma: Number,
-  poisoned: Boolean
+  poisoned: {
+    type: Boolean,
+    default: false
+  }
 })
 
 /*****************/
@@ -79,15 +85,24 @@ app.get('/api/guild/:name', async (request, response) => {
   
 })
 
-// TODO: Add `poisoned` property to new players with a default of false
-// TODO: Stop duplicate players from inserting
 app.post('/api/guild', async (request, response) => {
-  const player = new Player(request.body)
+  // TODO: Add some validation with a try/catch block
+  // TODO: redirect to static response pages depending on try/catch result
 
-  await player.save()
+  try {
+    const player = new Player(request.body)
+  
+    await player.save()
+  
+    console.log(player)
+    response.redirect('/success.html')
 
-  console.log(player)
-  response.send(player)
+  } catch(err) {
+
+    console.log(err)
+    response.redirect('/fail.html')
+    
+  }
 })
 
 /****************************/
